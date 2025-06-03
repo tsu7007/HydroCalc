@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HydroCalc - Calculadora de Saneamiento Hidráulico</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="container">
+                <h1 class="header-title">
+                    <span class="header-icon">💧</span>
+                    HydroCalc - Calculadora de Saneamiento Hidráulico
+                </h1>
+                <p class="header-subtitle">Verificación de secciones ovoidales para sistemas de alcantarillado</p>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="container">
+                <div class="content-grid">
+                    <!-- Panel de Entrada -->
+                    <div class="panel input-panel">
+                        <div class="card">
+                            <div class="card__header">
+                                <h2>📊 Datos del Proyecto</h2>
+                            </div>
+                            <div class="card__body">
+                                <div class="form-group">
+                                    <label class="form-label" for="pendiente">Pendiente del colector (%)</label>
+                                    <input type="number" id="pendiente" class="form-control" value="0.7" step="0.1" min="0.1">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="seccion">Sección ovoidal</label>
+                                    <select id="seccion" class="form-control">
+                                        <option value="120/180">120/180 mm</option>
+                                        <option value="150/225">150/225 mm</option>
+                                        <option value="200/300">200/300 mm</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="q_med_negras">Caudal medio aguas negras (m³/s)</label>
+                                    <input type="number" id="q_med_negras" class="form-control" value="0.0413" step="0.0001" min="0">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="coef_punta">Coeficiente de punta</label>
+                                    <input type="number" id="coef_punta" class="form-control" value="2.4" step="0.1" min="1">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="coef_minimo">Coeficiente mínimo (Qmin)</label>
+                                    <input type="number" id="coef_minimo" class="form-control" value="0.2" step="0.1" min="0.1">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="q_lluvia">Caudal de lluvia (m³/s)</label>
+                                    <input type="number" id="q_lluvia" class="form-control" value="4.112" step="0.001" min="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel de Resultados -->
+                    <div class="panel results-panel">
+                        <div class="card">
+                            <div class="card__header">
+                                <h2>📈 Resultados de Cálculo</h2>
+                            </div>
+                            <div class="card__body">
+                                <!-- Caudales Calculados -->
+                                <div class="results-section">
+                                    <h3>Caudales Calculados</h3>
+                                    <div class="results-grid">
+                                        <div class="result-item">
+                                            <span class="result-label">Q punta,n (m³/s)</span>
+                                            <span id="q_punta" class="result-value">0.000</span>
+                                        </div>
+                                        <div class="result-item">
+                                            <span class="result-label">Q mínimo (m³/s)</span>
+                                            <span id="q_minimo" class="result-value">0.000</span>
+                                        </div>
+                                        <div class="result-item">
+                                            <span class="result-label">Q máximo total (m³/s)</span>
+                                            <span id="q_maximo" class="result-value">0.000</span>
+                                        </div>
+                                        <div class="result-item">
+                                            <span class="result-label">Q lleno sección (m³/s)</span>
+                                            <span id="q_lleno" class="result-value">0.000</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Verificación de Sección -->
+                                <div class="results-section">
+                                    <h3>Verificación de Sección</h3>
+                                    <div class="verification-status">
+                                        <div id="status_indicator" class="status-indicator">
+                                            <span id="status_icon" class="status-icon">✓</span>
+                                            <span id="status_text" class="status-text">SECCIÓN VÁLIDA</span>
+                                        </div>
+                                        <div class="verification-details">
+                                            <div class="result-item">
+                                                <span class="result-label">Relación Q/Q_lleno</span>
+                                                <span id="relacion_q" class="result-value">0.000</span>
+                                            </div>
+                                            <div class="result-item">
+                                                <span class="result-label">Relación h/H estimada</span>
+                                                <span id="relacion_h" class="result-value">0.000</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Verificaciones de Velocidad -->
+                        <div class="card velocity-card">
+                            <div class="card__header">
+                                <h2>🌊 Verificaciones Hidráulicas</h2>
+                            </div>
+                            <div class="card__body">
+                                <div class="velocity-checks">
+                                    <div id="check_v_max" class="velocity-check">
+                                        <span class="check-icon">✓</span>
+                                        <span class="check-text">V máxima ≤ 5.0 m/s</span>
+                                        <span id="v_max_value" class="check-value">0.00 m/s</span>
+                                    </div>
+                                    <div id="check_v_min" class="velocity-check">
+                                        <span class="check-icon">✓</span>
+                                        <span class="check-text">V mínima ≥ 0.6 m/s</span>
+                                        <span id="v_min_value" class="check-value">0.00 m/s</span>
+                                    </div>
+                                    <div id="check_v_negras" class="velocity-check">
+                                        <span class="check-icon">✓</span>
+                                        <span class="check-text">V aguas negras ≤ 3.0 m/s</span>
+                                        <span id="v_negras_value" class="check-value">0.00 m/s</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección de Fórmulas -->
+                <div class="formulas-section">
+                    <div class="card">
+                        <div class="card__header formula-header" onclick="toggleFormulas()">
+                            <h2>📝 Fórmulas Utilizadas</h2>
+                            <span id="formula_toggle" class="toggle-icon">▼</span>
+                        </div>
+                        <div id="formulas_content" class="card__body formulas-content">
+                            <div class="formula-grid">
+                                <div class="formula-item">
+                                    <h4>Fórmula de Manning para ovoides:</h4>
+                                    <p class="formula">v = 80 × R<sub>H</sub><sup>2/3</sup> × I<sup>1/2</sup></p>
+                                </div>
+                                <div class="formula-item">
+                                    <h4>Radio hidráulico:</h4>
+                                    <p class="formula">R<sub>H</sub> = 0.579 × r</p>
+                                </div>
+                                <div class="formula-item">
+                                    <h4>Área de sección:</h4>
+                                    <p class="formula">S = 4.59 × r²</p>
+                                </div>
+                                <div class="formula-item">
+                                    <h4>Caudal de punta:</h4>
+                                    <p class="formula">Q<sub>punta</sub> = C<sub>punta</sub> × Q<sub>med</sub></p>
+                                </div>
+                                <div class="formula-item">
+                                    <h4>Caudal mínimo:</h4>
+                                    <p class="formula">Q<sub>min</sub> = C<sub>min</sub> × Q<sub>med</sub></p>
+                                </div>
+                                <div class="formula-item">
+                                    <h4>Caudal máximo:</h4>
+                                    <p class="formula">Q<sub>max</sub> = Q<sub>lluvia</sub> + Q<sub>punta</sub></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
